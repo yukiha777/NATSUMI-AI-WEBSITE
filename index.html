@@ -4,56 +4,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NATSUMI AI</title>
-  <link rel="stylesheet" href="style.css"/>
-  <script defer src="script.js"></script>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <div class="logo">NATSUMI</div>
-    <nav>
-      <a href="#features">기능</a>
-      <a href="#chat">채팅</a>
-      <a href="#login">로그인</a>
-    </nav>
-  </header>
+  <div class="app-container">
+    <h1 class="logo">NATSUMI</h1>
 
-  <section class="hero fade-in">
-    <h1>당신만의 AI 비서, <span class="highlight">NATSUMI</span></h1>
-    <p>보라빛 감성에, 금빛 지성. 지금 나츠미를 만나보세요!</p>
-    <a href="#chat" class="cta-button">채팅 시작하기</a>
-  </section>
-
-  <section id="features" class="features slide-up">
-    <h2>✨ 기능 소개</h2>
-    <div class="feature-list">
-      <div class="feature">💬 자연어 대화</div>
-      <div class="feature">📚 기억 기반 학습</div>
-      <div class="feature">🎨 감정 표현</div>
-      <div class="feature">🎵 음악 재생</div>
-    </div>
-  </section>
-
-  <section id="chat" class="chat-section fade-in">
-    <h2>나츠미와 대화하기</h2>
-    <div class="chat-container">
-      <div id="chat-window" class="chat-window"></div>
-      <input type="text" id="chat-input" placeholder="메시지를 입력하세요..." />
-      <button id="send-button">전송</button>
-    </div>
-    <div id="emotion-viewer" class="emotion-viewer">😐</div>
-  </section>
-
-  <section id="login" class="login-section slide-up">
-    <h2>로그인</h2>
-    <form id="login-form">
-      <input type="text" id="username" placeholder="사용자 이름" required />
-      <input type="password" id="password" placeholder="비밀번호" required />
+    <form id="login-form" class="login-box">
+      <input id="username" type="text" placeholder="이름..." required />
+      <input id="password" type="password" placeholder="비밀번호..." required />
       <button type="submit">로그인</button>
     </form>
-  </section>
 
-  <footer>
-    <p>&copy; 2025 NATSUMI AI. 모든 권리 보유.</p>
-  </footer>
+    <div id="chat-container" class="chat-box hidden">
+      <div id="chat-window" class="chat-window"></div>
+      <div class="input-row">
+        <input type="text" id="chat-input" placeholder="나츠미에게 말 걸기..." />
+        <button id="send-button">보내기</button>
+      </div>
+    </div>
+
+    <div id="emotion-viewer" class="emotion-viewer">😐</div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
