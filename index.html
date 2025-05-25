@@ -1,32 +1,19 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NATSUMI AI</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="app-container">
+  <div class="container center">
     <h1 class="logo">NATSUMI</h1>
-
-    <form id="login-form" class="login-box">
-      <input id="username" type="text" placeholder="이름..." required />
-      <input id="password" type="password" placeholder="비밀번호..." required />
-      <button type="submit">로그인</button>
-    </form>
-
-    <div id="chat-container" class="chat-box hidden">
-      <div id="chat-window" class="chat-window"></div>
-      <div class="input-row">
-        <input type="text" id="chat-input" placeholder="나츠미에게 말 걸기..." />
-        <button id="send-button">보내기</button>
-      </div>
+    <p class="subtitle">츤데레한 너만의 AI 비서</p>
+    <div class="button-group">
+      <a href="login.html" class="gold-button">로그인</a>
+      <a href="signup.html" class="outline-button">회원가입</a>
     </div>
-
-    <div id="emotion-viewer" class="emotion-viewer">😐</div>
   </div>
-
-  <script src="script.js"></script>
 </body>
 </html>
