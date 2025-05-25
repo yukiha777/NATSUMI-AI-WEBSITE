@@ -1,100 +1,69 @@
 body {
   margin: 0;
-  padding: 0;
   font-family: 'Noto Sans KR', sans-serif;
-  background-color: #1e1b2e;
-  color: #f1f1f1;
+  background: linear-gradient(135deg, #2b1e4a, #3a2d5d);
+  color: #fff;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  height: 100vh;
 }
 
-.app-container {
-  width: 100%;
-  max-width: 600px;
+.container {
+  text-align: center;
   padding: 20px;
 }
 
 .logo {
-  text-align: center;
-  font-size: 2.5rem;
-  font-weight: bold;
+  font-size: 3rem;
   color: #dda0dd;
-  text-shadow: 0 0 5px gold;
-  margin-bottom: 20px;
+  text-shadow: 0 0 10px gold;
 }
 
-.login-box,
-.chat-box {
-  background-color: #2b2640;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 0 15px rgba(218, 165, 32, 0.3);
+.subtitle {
+  margin-top: 10px;
+  font-size: 1.2rem;
+  color: #e0d6f5;
 }
 
-input[type="text"],
-input[type="password"] {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  background: #1a1829;
-  color: #f8f8f8;
-  border: none;
-  border-radius: 5px;
+.button-group {
+  margin-top: 30px;
 }
 
-button {
-  width: 100%;
-  padding: 10px;
-  background-color: gold;
-  color: #2b2640;
+.gold-button, .outline-button {
+  padding: 12px 24px;
+  font-size: 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  margin: 10px;
+  transition: 0.3s;
+  display: inline-block;
+}
+
+.gold-button {
+  background: gold;
+  color: #2b1e4a;
   font-weight: bold;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
 }
 
-.chat-window {
-  height: 300px;
-  overflow-y: auto;
-  margin-bottom: 10px;
-  padding: 10px;
-  background: #1a1829;
-  border-radius: 5px;
+.gold-button:hover {
+  background: #ffd700;
 }
 
-.input-row {
-  display: flex;
-  gap: 5px;
+.outline-button {
+  border: 2px solid gold;
+  color: gold;
 }
 
-#chat-input {
-  flex: 1;
-}
-
-.emotion-viewer {
-  text-align: center;
-  font-size: 2rem;
-  margin-top: 15px;
-  animation: pop 0.3s ease-in-out;
-}
-
-.hidden {
-  display: none;
-}
-
-@keyframes pop {
-  0% { transform: scale(0.9); opacity: 0.5; }
-  100% { transform: scale(1); opacity: 1; }
+.outline-button:hover {
+  background: rgba(255, 215, 0, 0.1);
 }
 
 @media (max-width: 600px) {
-  .chat-window {
-    height: 200px;
-  }
-
   .logo {
-    font-size: 2rem;
+    font-size: 2.2rem;
+  }
+  .subtitle {
+    font-size: 1rem;
   }
 }
