@@ -1,86 +1,142 @@
-// 채팅 전송 버튼
-document.getElementById("send-button").addEventListener("click", async () => {
-  const input = document.getElementById("chat-input");
-  const message = input.value.trim();
-  if (message === "") return;
+const signupForm = document.getElementById("signup-form");
+const loginForm = document.getElementById("login-form");
+const chatForm = document.getElementById("chat-form");
+const chatBox = document.getElementById("chat-box");
+const emotionDisplay = document.getElementById("emotion-display");
+const emojiButton = document.getElementById("emoji-button");
+const emojiOutput = document.getElementById("emoji-output");
 
-  const chatWindow = document.getElementById("chat-window");
+const API_URL = "https://natsumi-mi-shu.onrender.com/natsumi";
 
-  // 사용자 메시지 표시
-  const userMessage = document.createElement("div");
-  userMessage.textContent = `너: ${message}`;
-  chatWindow.appendChild(userMessage);
+// 📝 회원가입 처리
+if (signupForm) {
+  signupForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  // 백엔드에 메시지 전송
-  const reply = await generateResponse(message);
+    const username = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
 
-  // 나츠미의 응답 표시
-  const natsumiMessage = document.createElement("div");
-  natsumiMessage.textContent = `나츠미: ${reply}`;
-  chatWindow.appendChild(natsumiMessage);
+    try {
+      const res = await fetch(`${API_URL}/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password }),
+      });
+      const result = await res.json();
 
-  // 감정 업데이트
-  updateEmotionViewer(reply);
-
-  input.value = "";
-  chatWindow.scrollTop = chatWindow.scrollHeight;
-});
-
-// 나츠미 응답 생성 (백엔드 호출)
-async function generateResponse(message) {
-  try {
-    const response = await fetch('https://natsumi-mi-shu.onrender.com/natsumi', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ message })
-    });
-
-    const data = await response.json();
-    return data.reply || "응? 그게 무슨 말이야, 바보야...";
-  } catch (error) {
-    console.error('응답 오류:', error);
-    return "지금은 말 걸지 마... 나츠미 바쁘단 말야!";
-  }
-}
-
-// 감정 이모지 업데이트
-function updateEmotionViewer(message) {
-  const emotionViewer = document.getElementById("emotion-viewer");
-  if (message.includes("기뻐") || message.includes("좋아")) {
-    emotionViewer.textContent = "😊";
-  } else if (message.includes("고마워") || message.includes("감사")) {
-    emotionViewer.textContent = "😳";
-  } else if (message.includes("화나") || message.includes("짜증")) {
-    emotionViewer.textContent = "😠";
-  } else {
-    emotionViewer.textContent = "😐";
-  }
-}
-
-// 로그인 처리
-document.getElementById("login-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
-
-  try {
-    const response = await fetch('https://natsumi-mi-shu.onrender.com/natsumi/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-      alert(`어... 어서 와, ${username}. 기다린 건 아니니까!!`);
-    } else {
-      alert("틀렸잖아… 바보야.");
+      if (res.ok) {
+        alert("회원가입 성공~ 이제 로그인하라구…! 바보야!");
+        window.location.href = "login.html";
+      } else {
+        alert("회원가입 실패: " + (result.message || "몰라! 다시 해봐!!"));
+      }
+    } catch (err) {
+      alert("서버가 삐졌나봐… 연결 안 돼 😤");
     }
-  } catch (err) {
-    console.error('로그인 실패:', err);
-    alert("으… 나츠미가 서버랑 연결이 안 돼… 네 탓은 아니야... 아마.");
+  });
+}
+
+// 🔐 로그인 처리
+if (loginForm) {
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    try {
+      const res = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const result = await res.json();
+
+      if (res.ok) {
+        localStorage.setItem("token", result.token);
+        alert("로그인 성공! 뭐, 칭찬은 못 해주지만… 흐응");
+        window.location.href = "chat.html";
+      } else {
+        alert("로그인 실패: " + (result.message || "다시 확인하라구!"));
+      }
+    } catch (err) {
+      alert("서버가 응답 안 해! 분명 자고 있는 거야…");
+    }
+  });
+}
+
+// 💬 채팅 기능
+if (chatForm) {
+  chatForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const userMessage = document.getElementById("user-message").value.trim();
+    if (!userMessage) return;
+
+    displayMessage("너", userMessage);
+    document.getElementById("user-message").value = "";
+
+    try {
+      const res = await fetch(`${API_URL}/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userMessage }),
+      });
+      const result = await res.json();
+
+      if (res.ok && result.reply) {
+        displayMessage("나츠미", result.reply);
+        updateEmotion(result.emotion || "무표정");
+      } else {
+        displayMessage("나츠미", "응...? 다시 말해봐, 바보야.");
+      }
+    } catch (err) {
+      displayMessage("나츠미", "서버가 삐진 것 같아... 그런가 봐.");
+    }
+  });
+}
+
+// 🤖 메시지 출력
+function displayMessage(sender, message) {
+  const msgElem = document.createElement("div");
+  msgElem.className = "message";
+  msgElem.innerHTML = `<strong>${sender}:</strong> ${message}`;
+  chatBox.appendChild(msgElem);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// 😡 감정 업데이트
+function updateEmotion(emotion) {
+  if (emotionDisplay) {
+    emotionDisplay.textContent = `지금 기분은… ${emotion}이야… 뭐, 그냥 그렇다고!`;
   }
-});
+}
+
+// 🥴 이모지 생성기
+if (emojiButton) {
+  emojiButton.addEventListener("click", async () => {
+    const userMessage = document.getElementById("user-message").value.trim();
+    if (!userMessage) {
+      alert("무언가 입력하라고, 바보야!");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/emoji`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userMessage }),
+      });
+      const result = await res.json();
+
+      if (res.ok && result.emoji) {
+        emojiOutput.textContent = `이모지 느낌은… ${result.emoji}`;
+      } else {
+        emojiOutput.textContent = "이모지 못 만들었어… 너 때문이야! (아마)";
+      }
+    } catch (err) {
+      emojiOutput.textContent = "이모지 만들기 실패… 흐응, 다음엔 제대로 하라구.";
+    }
+  });
+}
