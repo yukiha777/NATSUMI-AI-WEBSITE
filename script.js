@@ -11,7 +11,10 @@ async function loginUser(email, password) {
       body: JSON.stringify({ email, password })
     });
 
-    if (!response.ok) throw new Error("로그인 실패");
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "로그인 실패");
+    }
 
     const data = await response.json();
     localStorage.setItem("token", data.token);
@@ -20,7 +23,7 @@ async function loginUser(email, password) {
 
     window.location.href = "chat.html";
   } catch (err) {
-    alert("아이디나 비밀번호 틀렸잖아, 바보...");
+    alert(`아이디나 비밀번호 틀렸잖아, 바보... (${err.message})`);
     console.error(err);
   }
 }
@@ -42,18 +45,13 @@ async function registerUser(email, password) {
     alert("회원가입 완료… 너랑 같이 해줄게, 특별히!");
     window.location.href = "login.html";
   } catch (err) {
-    alert("에휴… 잘 좀 하지 그래? 회원가입 실패야.");
+    alert(`에휴… 회원가입 실패야: ${err.message}`);
     console.error(err);
   }
 }
 
 // =====================[ 채팅 기능 ]=====================
 async function sendMessageToAI(message) {
-  if (!authToken) {
-    alert("로그인 먼저 하라고!");
-    window.location.href = "login.html";
-    return;
-  }
   try {
     const response = await fetch(`${API_BASE}/chat`, {
       method: "POST",
@@ -76,7 +74,7 @@ async function sendMessageToAI(message) {
 
 function displayChatMessage(sender, message) {
   const chatBox = document.getElementById("chat-box");
-  if (!chatBox) return;
+  if (!chatBox) return; // 안전빵
 
   const msg = document.createElement("div");
   msg.className = sender === "나" ? "my-message" : "natsumi-message";
@@ -87,11 +85,6 @@ function displayChatMessage(sender, message) {
 
 // =====================[ 감정 뷰어 ]=====================
 async function fetchEmotion() {
-  if (!authToken) {
-    alert("로그인부터 해라구!");
-    window.location.href = "login.html";
-    return;
-  }
   try {
     const response = await fetch(`${API_BASE}/emotion`, {
       headers: {
@@ -99,7 +92,7 @@ async function fetchEmotion() {
       }
     });
 
-    if (!response.ok) throw new Error("감정 불러오기 실패");
+    if (!response.ok) throw new Error("감정 정보 가져오기 실패");
 
     const data = await response.json();
     document.getElementById("emotion-status").textContent = `나츠미 기분: ${data.emotion} 😤`;
@@ -111,11 +104,6 @@ async function fetchEmotion() {
 
 // =====================[ 이모지 생성 ]=====================
 async function generateEmoji(emotion) {
-  if (!authToken) {
-    alert("로그인부터 하라고!");
-    window.location.href = "login.html";
-    return;
-  }
   try {
     const response = await fetch(`${API_BASE}/emoji`, {
       method: "POST",
@@ -136,14 +124,6 @@ async function generateEmoji(emotion) {
   }
 }
 
-// =====================[ 로그아웃 기능 ]=====================
-function logout() {
-  localStorage.removeItem("token");
-  authToken = null;
-  alert("꺼져라, 바보!");
-  window.location.href = "login.html";
-}
-
 // =====================[ 이벤트 핸들러 등록 ]=====================
 document.addEventListener("DOMContentLoaded", () => {
   // 로그인 폼
@@ -151,8 +131,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (loginForm) {
     loginForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
+      const email = loginForm.querySelector("#email").value;
+      const password = loginForm.querySelector("#password").value;
       loginUser(email, password);
     });
   }
@@ -162,8 +142,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (signupForm) {
     signupForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
+      const email = signupForm.querySelector("#email").value;
+      const password = signupForm.querySelector("#password").value;
       registerUser(email, password);
     });
   }
@@ -198,11 +178,5 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!emotion) return;
       generateEmoji(emotion);
     });
-  }
-
-  // 로그아웃 버튼
-  const logoutBtn = document.getElementById("logout-btn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", logout);
   }
 });
