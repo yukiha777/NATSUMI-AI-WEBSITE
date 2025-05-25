@@ -1,115 +1,100 @@
-/* 기본 설정 */
 body {
   margin: 0;
-  font-family: 'Noto Sans KR', sans-serif;
-  background: linear-gradient(135deg, #2b1e4a, #3a2d5d);
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  font-family: 'Pretendard', sans-serif;
+  background: linear-gradient(135deg, #e3d6ff, #fdfaff);
+  color: #333;
 }
 
-a {
-  color: gold;
-  text-decoration: none;
+.container, .chat-container {
+  max-width: 600px;
+  margin: 3em auto;
+  padding: 2em;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(180, 150, 255, 0.2);
 }
 
-a:hover {
-  text-decoration: underline;
-}
-
-.container {
+h1 {
+  color: #805ad5;
+  font-size: 2em;
   text-align: center;
-  padding: 20px;
-}
-
-.logo {
-  font-size: 3rem;
-  color: #dda0dd;
-  text-shadow: 0 0 10px gold;
 }
 
 .subtitle {
-  margin-top: 10px;
-  font-size: 1.2rem;
-  color: #e0d6f5;
+  text-align: center;
+  margin-bottom: 1em;
+  font-style: italic;
+  color: #b58cff;
 }
 
-.button-group {
-  margin-top: 30px;
-}
-
-.gold-button, .outline-button {
-  padding: 12px 24px;
-  font-size: 1rem;
+input, button {
+  width: 100%;
+  padding: 0.75em;
+  margin: 0.5em 0;
   border-radius: 8px;
-  text-decoration: none;
-  margin: 10px;
-  transition: 0.3s;
-  display: inline-block;
+  border: 1px solid #ccc;
+  font-size: 1em;
+}
+
+button {
+  background: linear-gradient(to right, #9f7aea, #d6bcfa);
+  color: white;
+  font-weight: bold;
   border: none;
   cursor: pointer;
+  transition: 0.2s;
 }
 
-.gold-button {
-  background: gold;
-  color: #2b1e4a;
+button:hover {
+  transform: scale(1.03);
+}
+
+a {
+  color: #805ad5;
+  text-decoration: none;
+}
+
+.chat-box {
+  height: 300px;
+  overflow-y: auto;
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 1em;
+  margin-bottom: 1em;
+}
+
+.message {
+  margin-bottom: 0.8em;
+}
+
+.emotion-display, .emoji-output {
+  margin-top: 1em;
   font-weight: bold;
-}
-
-.gold-button:hover {
-  background: #ffd700;
-}
-
-.outline-button {
-  border: 2px solid gold;
-  color: gold;
-  background: transparent;
-}
-
-.outline-button:hover {
-  background: rgba(255, 215, 0, 0.1);
-}
-
-.auth-container {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 40px;
-  border-radius: 16px;
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  color: #d69e2e;
   text-align: center;
-  width: 90%;
-  max-width: 400px;
 }
 
-.auth-container h2 {
-  color: gold;
-  margin-bottom: 20px;
+.header, .footer {
+  text-align: center;
+  padding: 1em;
+  background: #faf5ff;
+  border-bottom: 1px solid #e9d8fd;
 }
 
-.auth-container input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
+.footer {
+  margin-top: 2em;
+  font-size: 0.9em;
+  color: #999;
 }
 
-.auth-container input:focus {
-  outline: 2px solid gold;
-}
-
-.small-text {
-  font-size: 0.9rem;
-  color: #ccc;
-}
-
-@media (max-width: 600px) {
-  .logo {
-    font-size: 2.2rem;
+@media screen and (max-width: 600px) {
+  .container, .chat-container {
+    margin: 1em;
+    padding: 1em;
   }
-  .subtitle {
-    font-size: 1rem;
+
+  input, button {
+    font-size: 0.95em;
   }
 }
