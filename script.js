@@ -7,15 +7,16 @@ async function loginUser(username, password) {
   try {
     const response = await fetch(`${API_BASE}/login`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ username, password })
     });
 
     if (!response.ok) throw new Error("로그인 실패");
 
     const data = await response.json();
     localStorage.setItem("token", data.token);
-    authToken = data.token;
     alert("로그인 성공! 츤츤… 그래도 반가워…");
 
     window.location.href = "chat.html";
@@ -30,11 +31,16 @@ async function registerUser(username, password) {
   try {
     const response = await fetch(`${API_BASE}/signup`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ username, password })
     });
 
-    if (!response.ok) throw new Error("회원가입 실패");
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`회원가입 실패: ${errorText}`);
+    }
 
     alert("회원가입 완료… 너랑 같이 해줄게, 특별히!");
     window.location.href = "login.html";
@@ -51,9 +57,9 @@ async function sendMessageToAI(message) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${authToken}`,
+        "Authorization": `Bearer ${authToken}`
       },
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({ message })
     });
 
     if (!response.ok) throw new Error("AI 응답 실패");
@@ -68,8 +74,6 @@ async function sendMessageToAI(message) {
 
 function displayChatMessage(sender, message) {
   const chatBox = document.getElementById("chat-box");
-  if (!chatBox) return;
-
   const msg = document.createElement("div");
   msg.className = sender === "나" ? "my-message" : "natsumi-message";
   msg.textContent = `${sender}: ${message}`;
@@ -82,11 +86,9 @@ async function fetchEmotion() {
   try {
     const response = await fetch(`${API_BASE}/emotion`, {
       headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
+        "Authorization": `Bearer ${authToken}`
+      }
     });
-
-    if (!response.ok) throw new Error("감정 정보 가져오기 실패");
 
     const data = await response.json();
     document.getElementById("emotion-status").textContent = `나츠미 기분: ${data.emotion} 😤`;
@@ -103,12 +105,10 @@ async function generateEmoji(emotion) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${authToken}`,
+        "Authorization": `Bearer ${authToken}`
       },
-      body: JSON.stringify({ emotion }),
+      body: JSON.stringify({ emotion })
     });
-
-    if (!response.ok) throw new Error("이모지 생성 실패");
 
     const data = await response.json();
     document.getElementById("emoji-result").textContent = data.emoji || "…응? 이모지 안 나왔는데?";
@@ -125,8 +125,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (loginForm) {
     loginForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      const username = loginForm.querySelector("#email").value.trim();
-      const password = loginForm.querySelector("#password").value.trim();
+      const username = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
       loginUser(username, password);
     });
   }
@@ -136,8 +136,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (signupForm) {
     signupForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      const username = signupForm.querySelector("#email").value.trim();
-      const password = signupForm.querySelector("#password").value.trim();
+      const username = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
       registerUser(username, password);
     });
   }
@@ -148,8 +148,8 @@ document.addEventListener("DOMContentLoaded", () => {
     chatForm.addEventListener("submit", (e) => {
       e.preventDefault();
       const input = document.getElementById("chat-input");
-      const message = input.value.trim();
-      if (!message) return;
+      const message = input.value;
+      if (!message.trim()) return;
       displayChatMessage("나", message);
       sendMessageToAI(message);
       input.value = "";
@@ -162,13 +162,12 @@ document.addEventListener("DOMContentLoaded", () => {
     emotionBtn.addEventListener("click", fetchEmotion);
   }
 
-  // 이모지 생성 폼
+  // 이모지 생성 버튼
   const emojiForm = document.getElementById("emoji-form");
   if (emojiForm) {
     emojiForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      const emotion = document.getElementById("emoji-input").value.trim();
-      if (!emotion) return;
+      const emotion = document.getElementById("emoji-input").value;
       generateEmoji(emotion);
     });
   }
