@@ -1,3 +1,4 @@
+/* 기본 설정 */
 body {
   margin: 0;
   font-family: 'Noto Sans KR', sans-serif;
@@ -7,6 +8,15 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+}
+
+a {
+  color: gold;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
 }
 
 .container {
@@ -38,6 +48,8 @@ body {
   margin: 10px;
   transition: 0.3s;
   display: inline-block;
+  border: none;
+  cursor: pointer;
 }
 
 .gold-button {
@@ -53,19 +65,11 @@ body {
 .outline-button {
   border: 2px solid gold;
   color: gold;
+  background: transparent;
 }
 
 .outline-button:hover {
   background: rgba(255, 215, 0, 0.1);
-}
-
-@media (max-width: 600px) {
-  .logo {
-    font-size: 2.2rem;
-  }
-  .subtitle {
-    font-size: 1rem;
-  }
 }
 
 .auth-container {
@@ -99,4 +103,13 @@ body {
 .small-text {
   font-size: 0.9rem;
   color: #ccc;
+}
+
+@media (max-width: 600px) {
+  .logo {
+    font-size: 2.2rem;
+  }
+  .subtitle {
+    font-size: 1rem;
+  }
 }
