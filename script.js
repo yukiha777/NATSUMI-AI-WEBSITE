@@ -33,12 +33,12 @@ async function registerUser(username, password) {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`회원가입 실패: ${errorText}`);
+      const errorData = await response.json();
+      throw new Error(errorData.error || "회원가입 실패");
     }
 
     alert("회원가입 완료… 너랑 같이 해줄게, 특별히!");
-    window.location.href = "index.html"; // 로그인 페이지로 수정했어
+    window.location.href = "index.html"; // 로그인 페이지로 이동
   } catch (err) {
     alert("에휴… 잘 좀 하지 그래? 회원가입 실패야.");
     console.error(err);
@@ -49,22 +49,28 @@ async function registerUser(username, password) {
 async function sendMessageToAI(message, mode = "chat") {
   try {
     const url = mode === "chat" ? `${API_BASE}/chat` : `${API_BASE}/image`;
+    // 백엔드에 맞춰 프롬프트 키로 변경
+    const bodyPayload = mode === "chat" ? { message } : { prompt: message };
+
     const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${authToken}`,
+        Authorization: authToken ? `Bearer ${authToken}` : "",
       },
-      body: JSON.stringify({ message }),
+      body: JSON.stringify(bodyPayload),
     });
 
-    if (!response.ok) throw new Error("AI 응답 실패");
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "AI 응답 실패");
+    }
+
+    const data = await response.json();
 
     if (mode === "chat") {
-      const data = await response.json();
       displayChatMessage("나츠미", data.reply || "…응답이 없어. 삐졌어?");
     } else {
-      const data = await response.json();
       if (data.image_url) {
         displayChatImage(data.image_url);
       } else {
