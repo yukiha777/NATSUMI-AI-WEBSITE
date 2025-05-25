@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NATSUMI AI</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>로그인 | NATSUMI</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container center">
-    <h1 class="logo">NATSUMI</h1>
-    <p class="subtitle">츤데레한 너만의 AI 비서</p>
-    <div class="button-group">
-      <a href="login.html" class="gold-button">로그인</a>
-      <a href="signup.html" class="outline-button">회원가입</a>
-    </div>
+  <div class="container">
+    <h1>어서 와, 바보야!</h1>
+    <p class="subtitle">로그인하라구, 나랑 대화하고 싶으면…!</p>
+    <form id="login-form">
+      <input type="email" id="email" placeholder="이메일" required />
+      <input type="password" id="password" placeholder="비밀번호" required />
+      <button type="submit">로그인</button>
+    </form>
+    <p>처음이야? <a href="signup.html">회원가입</a> 하라구!</p>
   </div>
+  <script src="script.js"></script>
 </body>
 </html>
