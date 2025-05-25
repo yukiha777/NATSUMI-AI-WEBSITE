@@ -7,10 +7,8 @@ async function loginUser(username, password) {
   try {
     const response = await fetch(`${API_BASE}/login`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ username, password })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
     });
 
     if (!response.ok) throw new Error("로그인 실패");
@@ -18,7 +16,6 @@ async function loginUser(username, password) {
     const data = await response.json();
     localStorage.setItem("token", data.token);
     alert("로그인 성공! 츤츤… 그래도 반가워…");
-
     window.location.href = "chat.html";
   } catch (err) {
     alert("아이디나 비밀번호 틀렸잖아, 바보...");
@@ -31,10 +28,8 @@ async function registerUser(username, password) {
   try {
     const response = await fetch(`${API_BASE}/signup`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ username, password })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
     });
 
     if (!response.ok) {
@@ -43,29 +38,39 @@ async function registerUser(username, password) {
     }
 
     alert("회원가입 완료… 너랑 같이 해줄게, 특별히!");
-    window.location.href = "login.html";
+    window.location.href = "index.html"; // 로그인 페이지로 수정했어
   } catch (err) {
     alert("에휴… 잘 좀 하지 그래? 회원가입 실패야.");
     console.error(err);
   }
 }
 
-// =====================[ 채팅 기능 ]=====================
-async function sendMessageToAI(message) {
+// =====================[ 채팅 및 이미지 생성 기능 ]=====================
+async function sendMessageToAI(message, mode = "chat") {
   try {
-    const response = await fetch(`${API_BASE}/chat`, {
+    const url = mode === "chat" ? `${API_BASE}/chat` : `${API_BASE}/image`;
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${authToken}`
+        Authorization: `Bearer ${authToken}`,
       },
-      body: JSON.stringify({ message })
+      body: JSON.stringify({ message }),
     });
 
     if (!response.ok) throw new Error("AI 응답 실패");
 
-    const data = await response.json();
-    displayChatMessage("나츠미", data.reply || "…응답이 없어. 삐졌어?");
+    if (mode === "chat") {
+      const data = await response.json();
+      displayChatMessage("나츠미", data.reply || "…응답이 없어. 삐졌어?");
+    } else {
+      const data = await response.json();
+      if (data.image_url) {
+        displayChatImage(data.image_url);
+      } else {
+        displayChatMessage("나츠미", "이미지 생성 실패했어. 바보...");
+      }
+    }
   } catch (err) {
     console.error(err);
     displayChatMessage("나츠미", "에이, 서버 또 삐졌잖아!");
@@ -81,41 +86,18 @@ function displayChatMessage(sender, message) {
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// =====================[ 감정 뷰어 ]=====================
-async function fetchEmotion() {
-  try {
-    const response = await fetch(`${API_BASE}/emotion`, {
-      headers: {
-        "Authorization": `Bearer ${authToken}`
-      }
-    });
-
-    const data = await response.json();
-    document.getElementById("emotion-status").textContent = `나츠미 기분: ${data.emotion} 😤`;
-  } catch (err) {
-    console.error(err);
-    document.getElementById("emotion-status").textContent = "나츠미 기분: 모르겠어… 바보…";
-  }
-}
-
-// =====================[ 이모지 생성 ]=====================
-async function generateEmoji(emotion) {
-  try {
-    const response = await fetch(`${API_BASE}/emoji`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${authToken}`
-      },
-      body: JSON.stringify({ emotion })
-    });
-
-    const data = await response.json();
-    document.getElementById("emoji-result").textContent = data.emoji || "…응? 이모지 안 나왔는데?";
-  } catch (err) {
-    console.error(err);
-    document.getElementById("emoji-result").textContent = "흐응… 이모지 못 만들었어.";
-  }
+function displayChatImage(imageUrl) {
+  const chatBox = document.getElementById("chat-box");
+  const imgWrapper = document.createElement("div");
+  imgWrapper.className = "natsumi-message";
+  const img = document.createElement("img");
+  img.src = imageUrl;
+  img.alt = "Generated Image";
+  img.style.maxWidth = "300px";
+  img.style.borderRadius = "8px";
+  imgWrapper.appendChild(img);
+  chatBox.appendChild(imgWrapper);
+  chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 // =====================[ 이벤트 핸들러 등록 ]=====================
@@ -142,33 +124,32 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 채팅 폼
+  // 채팅/이미지 생성 폼
   const chatForm = document.getElementById("chat-form");
   if (chatForm) {
     chatForm.addEventListener("submit", (e) => {
       e.preventDefault();
       const input = document.getElementById("chat-input");
-      const message = input.value;
-      if (!message.trim()) return;
+      const message = input.value.trim();
+      if (!message) return;
+
+      const modeSelect = document.getElementById("mode-select");
+      const mode = modeSelect ? modeSelect.value : "chat";
+
       displayChatMessage("나", message);
-      sendMessageToAI(message);
+      sendMessageToAI(message, mode);
+
       input.value = "";
     });
   }
 
-  // 감정 보기 버튼
-  const emotionBtn = document.getElementById("check-emotion");
-  if (emotionBtn) {
-    emotionBtn.addEventListener("click", fetchEmotion);
-  }
-
-  // 이모지 생성 버튼
-  const emojiForm = document.getElementById("emoji-form");
-  if (emojiForm) {
-    emojiForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const emotion = document.getElementById("emoji-input").value;
-      generateEmoji(emotion);
+  // 로그아웃 버튼 (chat.html에 있어야 동작)
+  const logoutBtn = document.getElementById("logout-btn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("token");
+      alert("그래, 꺼져…!");
+      window.location.href = "index.html";
     });
   }
 });
